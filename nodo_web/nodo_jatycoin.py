@@ -1,2 +1,2 @@
 # Nodo Flask para Jatycoin
-print('Nodo Jatycoin activo.')
+print('Nodo Jatycoin activo')

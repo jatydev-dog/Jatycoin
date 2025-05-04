@@ -1,2 +1,2 @@
-# Wallet visual con firma Trezor
-print('Wallet Jatycoin lista.')
+# Wallet visual con Trezor
+print('Wallet Jatycoin lista')

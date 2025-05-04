@@ -1,2 +1,2 @@
-# Código de ejemplo para la blockchain de Jatycoin
-print('Blockchain Jatycoin cargada.')
+# Código de la blockchain de Jatycoin
+print('Blockchain cargada')

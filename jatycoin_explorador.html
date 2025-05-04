@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Explorador Jatycoin</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f0f0f0; max-width: 800px; margin: auto; }
+    h1 { color: #333; }
+    input, button { padding: 10px; font-size: 16px; }
+    .resultado { background: white; padding: 20px; margin-top: 20px; border-radius: 5px; box-shadow: 0 0 5px #ccc; }
+  </style>
+</head>
+<body>
+  <h1>🔍 Explorador de Jatycoin</h1>
+  <p>Consulta saldos y bloques desde tu nodo web.</p>
+  <h3>Ver saldo por dirección</h3>
+  <input type="text" id="direccion" placeholder="Pega tu dirección Jatycoin" size="50">
+  <button onclick="consultarSaldo()">Consultar saldo</button>
+  <h3>Ver bloque por número</h3>
+  <input type="number" id="bloque" placeholder="Número de bloque">
+  <button onclick="consultarBloque()">Consultar bloque</button>
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    const nodo = "https://TU_USUARIO.pythonanywhere.com";
+    async function consultarSaldo() {
+      const direccion = document.getElementById("direccion").value;
+      const res = await fetch(`${nodo}/saldo?direccion=${direccion}`);
+      const data = await res.json();
+      document.getElementById("resultado").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+    }
+    async function consultarBloque() {
+      const numero = document.getElementById("bloque").value;
+      const res = await fetch(`${nodo}/bloque/${numero}`);
+      const data = await res.json();
+      document.getElementById("resultado").innerHTML = "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+    }
+  </script>
+</body>
+</html>
