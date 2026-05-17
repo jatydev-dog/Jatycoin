@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 
-// Middleware para leer JSON (importante para después con Stripe/Zapier)
+// 🔹 Middleware para leer JSON (necesario para Zapier)
 app.use(express.json());
 
-// 🔹 Ruta base (para comprobar que funciona)
+// 🔹 Ruta base (comprobación)
 app.get('/', (req, res) => {
   res.json({
     status: 'ok',
@@ -12,11 +12,24 @@ app.get('/', (req, res) => {
   });
 });
 
-// 🔹 Endpoint de prueba (vesting)
-app.get('/create-vesting', (req, res) => {
+// 🔹 Endpoint REAL (recibe datos desde Zapier)
+app.post('/create-vesting', (req, res) => {
+  const { wallet, amount, email } = req.body;
+
+  console.log('--- NUEVO VESTING ---');
+  console.log('Wallet:', wallet);
+  console.log('Cantidad:', amount);
+  console.log('Email:', email);
+
+  // 🔹 RESPUESTA (confirmación)
   res.json({
     status: 'ok',
-    message: 'Endpoint create-vesting funcionando'
+    message: 'Vesting recibido correctamente',
+    data: {
+      wallet,
+      amount,
+      email
+    }
   });
 });
 
