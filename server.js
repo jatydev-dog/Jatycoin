@@ -11,7 +11,9 @@ let vestings = [];
 // ========================================
 app.post('/create-vesting', (req, res) => {
   try {
-    const { wallet, amount, email } = req.body;
+    const wallet = req.body.wallet || req.body.cartera;
+const amount = req.body.amount || req.body.cantidad;
+const email = req.body.email;
 
     // Validación básica
     if (!wallet || !amount || !email) {
