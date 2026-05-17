@@ -1,42 +1,62 @@
 const express = require('express');
 const app = express();
 
-// 🔹 Middleware para leer JSON (necesario para Zapier)
 app.use(express.json());
 
-// 🔹 Ruta base (comprobación)
+// 🔹 Endpoint de prueba
 app.get('/', (req, res) => {
-  res.json({
-    status: 'ok',
-    service: 'Jatycoin backend activo'
-  });
+    res.json({ status: "ok", service: "Jatycoin backend activo" });
 });
 
-// 🔹 Endpoint REAL (recibe datos desde Zapier)
-app.post('/create-vesting', (req, res) => {
-  const { wallet, amount, email } = req.body;
+// 🔹 Endpoint de vesting
+app.post('/create-vesting', async (req, res) => {
 
-  console.log('--- NUEVO VESTING ---');
-  console.log('Wallet:', wallet);
-  console.log('Cantidad:', amount);
-  console.log('Email:', email);
+    console.log("NUEVO VESTING:");
+    console.log(req.body);
 
-  // 🔹 RESPUESTA (confirmación)
-  res.json({
-    status: 'ok',
-    message: 'Vesting recibido correctamente',
-    data: {
-      wallet,
-      amount,
-      email
+    try {
+
+        const { cartera, cantidad, email } = req.body;
+
+        // Validación básica
+        if (!cartera || !cantidad || !email) {
+            return res.status(400).json({
+                status: "error",
+                message: "Faltan datos"
+            });
+        }
+
+        // 🔹 SIMULACIÓN de creación de vesting
+        console.log("Procesando vesting...");
+        console.log(`Wallet: ${cartera}`);
+        console.log(`Cantidad: ${cantidad}`);
+        console.log(`Email: ${email}`);
+
+        // Aquí irá más adelante el contrato real
+
+        res.json({
+            status: "ok",
+            message: "Vesting recibido correctamente",
+            data: {
+                cartera,
+                cantidad,
+                email
+            }
+        });
+
+    } catch (error) {
+        console.error("ERROR:", error);
+
+        res.status(500).json({
+            status: "error",
+            message: "Error interno"
+        });
     }
-  });
 });
 
-// 🔹 Puerto Railway
-const PORT = process.env.PORT || 8080;
+// 🔹 Puerto automático (Railway)
+const PORT = process.env.PORT || 3000;
 
-// 🔹 Arranque servidor
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+    console.log(`Servidor funcionando en puerto ${PORT}`);
 });
