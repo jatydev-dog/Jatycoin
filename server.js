@@ -1,63 +1,113 @@
 const express = require('express');
-
-console.log("VERSION NUEVA SERVER OK");
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 // ========================================
-// BASE TEMPORAL EN MEMORIA
+// ARCHIVO JSON
 // ========================================
+
+const DATA_FILE = path.join(__dirname, 'vestings.json');
+
+// ========================================
+// CARGAR VESTINGS
+// ========================================
+
 let vestings = [];
+
+if (fs.existsSync(DATA_FILE)) {
+
+  try {
+
+    vestings = JSON.parse(
+      fs.readFileSync(DATA_FILE)
+    );
+
+  } catch (e) {
+
+    vestings = [];
+
+  }
+}
+
+// ========================================
+// HOME
+// ========================================
+
+app.get('/', (req, res) => {
+
+  res.send('Jatycoin backend online');
+
+});
 
 // ========================================
 // CREATE VESTING
 // ========================================
-app.post('/create-vesting', (req, res) => {
 
-  console.log("BODY RECIBIDO:");
-  console.log(req.body);
+app.post('/create-vesting', (req, res) => {
 
   try {
 
-    // ACEPTAR AMBOS NOMBRES
-    const wallet = req.body.wallet || req.body.cartera;
-    const amount = req.body.amount || req.body.cantidad;
-    const email = req.body.email;
+    const wallet =
+      req.body.wallet ||
+      req.body.cartera;
 
-    console.log("wallet:", wallet);
-    console.log("amount:", amount);
-    console.log("email:", email);
+    const amount =
+      req.body.amount ||
+      req.body.cantidad;
 
-    // VALIDACIÓN
+    const email =
+      req.body.email;
+
+    console.log(req.body);
+
     if (!wallet || !amount || !email) {
-
-      console.log("FALTAN DATOS");
 
       return res.status(400).json({
         status: 'error',
         message: 'Faltan datos'
       });
+
     }
 
+    // ========================================
     // CREAR VESTING
+    // ========================================
+
     const vesting = {
+
       wallet: wallet.toLowerCase(),
       amount: Number(amount),
       email: email,
       timestamp: Date.now()
+
     };
 
     vestings.push(vesting);
+
+    // ========================================
+    // GUARDAR JSON
+    // ========================================
+
+    fs.writeFileSync(
+      DATA_FILE,
+      JSON.stringify(vestings, null, 2)
+    );
 
     console.log("VESTING CREADO:");
     console.log(vesting);
 
     return res.status(200).json({
+
       status: 'ok',
       message: 'Vesting creado correctamente',
       data: vesting
+
     });
 
   } catch (error) {
@@ -69,24 +119,32 @@ app.post('/create-vesting', (req, res) => {
       status: 'error',
       message: 'Error interno'
     });
+
   }
+
 });
 
 // ========================================
 // GET VESTING
 // ========================================
+
 app.get('/get-vesting/:wallet', (req, res) => {
 
   try {
 
-    const wallet = req.params.wallet.toLowerCase();
+    const wallet =
+      req.params.wallet.toLowerCase();
 
-    const results = vestings.filter(v => v.wallet === wallet);
+    const results = vestings.filter(
+      v => v.wallet === wallet
+    );
 
     return res.status(200).json({
+
       status: 'ok',
       total: results.length,
       data: results
+
     });
 
   } catch (error) {
@@ -97,14 +155,22 @@ app.get('/get-vesting/:wallet', (req, res) => {
       status: 'error',
       message: 'Error interno'
     });
+
   }
+
 });
 
 // ========================================
 // START SERVER
 // ========================================
+
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
-  console.log(`Servidor iniciado en puerto ${PORT}`);
+
+  console.log(
+    `Servidor iniciado en puerto ${PORT}`
+  );
+
 });
+
